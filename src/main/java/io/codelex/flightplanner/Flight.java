@@ -1,5 +1,7 @@
 package io.codelex.flightplanner;
 
+import java.util.Objects;
+
 public class Flight {
     private Long id;
     private Airport from;
@@ -63,5 +65,17 @@ public class Flight {
 
     public void setArrivalTime(String arrivalTime) {
         this.arrivalTime = arrivalTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Flight flight)) return false;
+        return Objects.equals(id, flight.id) && Objects.equals(from, flight.from) && Objects.equals(to, flight.to) && Objects.equals(carrier, flight.carrier) && Objects.equals(departureTime, flight.departureTime) && Objects.equals(arrivalTime, flight.arrivalTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, from, to, carrier, departureTime, arrivalTime);
     }
 }

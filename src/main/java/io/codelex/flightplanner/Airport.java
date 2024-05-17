@@ -12,6 +12,24 @@ public class Airport {
         this.city = city;
         this.airport = airport;
     }
+    // Inside the Airport class
+    public boolean isEgualAirport(Airport other) {
+        if (other == null) {
+            return false;
+        }
+        String thisCountry = this.country.trim().toLowerCase();
+        String thisCity = this.city.trim().toLowerCase();
+        String thisAirportCode = this.airport.trim().toUpperCase();
+
+        String otherCountry = other.country.trim().toLowerCase();
+        String otherCity = other.city.trim().toLowerCase();
+        String otherAirportCode = other.airport.trim().toUpperCase();
+        
+        return thisCountry.equals(otherCountry) &&
+                thisCity.equals(otherCity) &&
+                thisAirportCode.equals(otherAirportCode);
+    }
+
 
     public String getCountry() {
         return country;
