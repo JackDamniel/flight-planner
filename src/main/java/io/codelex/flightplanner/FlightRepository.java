@@ -51,7 +51,7 @@ public class FlightRepository {
     private synchronized Long generateFlightId() {
         return idGenerator.getAndIncrement();
     }
-    public  Flight findFlightById(Long id) {
+    public Flight findFlightById(Long id) {
         for (Flight flight : flights) {
             if (flight.getId().equals(id)) {
                 return flight;
@@ -69,14 +69,14 @@ public class FlightRepository {
                         airport.getCountry().toLowerCase().contains(lowerCasePhrase)
                                 || airport.getCity().toLowerCase().contains(lowerCasePhrase)
                                 || airport.getAirport().toLowerCase().contains(lowerCasePhrase))
-                .toList();
+                .collect(Collectors.toList());
     }
-    public List<Flight> searchFlights(SearchFlightsRequest request) {
+    public synchronized List<Flight> searchFlights(SearchFlightsRequest request) {
         return flights.stream()
-                .filter(flight -> flight.getFrom().isEgualAirport(request.getFrom())
-                        && flight.getTo().isEgualAirport(request.getTo())
-                        && isSameDate(flight.getDepartureTime(), request.getDepartureDate()))
-                .toList();
+                .filter(flight -> flight.getFrom().isEgualAirport(request.getFrom()) &&
+                        flight.getTo().isEgualAirport(request.getTo()) &&
+                        isSameDate(flight.getDepartureTime(), request.getDepartureDate()))
+                .collect(Collectors.toList());
     }
 
     private boolean isSameDate(String flightDepartureTime, String requestDepartureDate) {
