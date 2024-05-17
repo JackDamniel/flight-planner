@@ -19,38 +19,36 @@ public class FlightController {
     }
 
     @PostMapping("/testing-api/clear")
-    public ResponseEntity<String> clearFlights() {
+    public String clearFlights() {
         flightService.clearFlights();
-        return ResponseEntity.ok("Flights cleared successfully");
+        return "Flights cleared successfully";
     }
 
     @PutMapping("/admin-api/flights")
-
     public ResponseEntity<Flight> addFlight(@Valid @RequestBody AddFlightRequest request) {
-            Flight createdFlight = flightService.addFlight(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdFlight);
+        Flight createdFlight = flightService.addFlight(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdFlight);
     }
     @DeleteMapping("/admin-api/flights/{id}")
-    public ResponseEntity<Void> deleteFlight(@PathVariable Long id) {
+    public void deleteFlight(@PathVariable Long id) {
         flightService.deleteFlight(id);
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/admin-api/flights/{id}")
-    public ResponseEntity<Flight> fetchFlight(@PathVariable Long id) {
+    public Flight fetchFlight(@PathVariable Long id) {
         Flight flight = flightService.findFlightById(id);
-        return ResponseEntity.ok(flight);
+        return flight;
     }
     @GetMapping("/api/airports")
     public List<Airport> searchAirports(@RequestParam String search) {
         return flightService.searchAirports(search);
     }
     @PostMapping("/api/flights/search")
-    public ResponseEntity<PageResult<Flight>> searchFlights(SearchFlightsRequest request) {
+    public PageResult<Flight> searchFlights(@RequestBody SearchFlightsRequest request) {
         List<Flight> flights = flightService.searchFlights(request);
-        PageResult<Flight> pageResult = new PageResult<>(0, flights.size(), flights);
-        return ResponseEntity.ok(pageResult);
+        return new PageResult<>(0, flights.size(), flights);
     }
+
     @GetMapping("/api/flights/{id}")
     public Flight findFlightById(@PathVariable Long id) {
         Flight flight = flightService.findFlightById(id);

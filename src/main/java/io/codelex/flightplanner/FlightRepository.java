@@ -27,34 +27,31 @@ public class FlightRepository {
         return flights;
     }
 
-    public boolean existsDuplicateFlight(AddFlightRequest request) {
-        for (Flight flight : flights) {
-            if (flight.getFrom().equals(request.getFrom())
-                    && flight.getTo().equals(request.getTo())
-                    && flight.getDepartureTime().equals(request.getDepartureTime())
-                    && flight.getArrivalTime().equals(request.getArrivalTime())
-                    && flight.getCarrier().equals(request.getCarrier())) {
-                return true;
-            }
-        }
-        return false;
+    public synchronized boolean existsDuplicateFlight(AddFlightRequest request) {
+        return flights.stream().anyMatch(flight ->
+                flight.getFrom().equals(request.getFrom()) &&
+                        flight.getTo().equals(request.getTo()) &&
+                        flight.getDepartureTime().equals(request.getDepartureTime()) &&
+                        flight.getArrivalTime().equals(request.getArrivalTime()) &&
+                        flight.getCarrier().equals(request.getCarrier())
+        );
     }
-    public void deleteAll() {
+    public synchronized void deleteAll() {
         flights.clear();
     }
 
-    public boolean deleteFlightById(Long id) {
+    public synchronized boolean deleteFlightById(Long id) {
         return flights.removeIf(flight -> flight.getId().equals(id));
     }
-    public Flight addFlight(Flight flight) {
+    public synchronized Flight addFlight(Flight flight) {
         flight.setId(generateFlightId());
         flights.add(flight);
         return flight;
     }
-    private Long generateFlightId() {
+    private synchronized Long generateFlightId() {
         return idGenerator.getAndIncrement();
     }
-    public Flight findFlightById(Long id) {
+    public  Flight findFlightById(Long id) {
         for (Flight flight : flights) {
             if (flight.getId().equals(id)) {
                 return flight;
@@ -72,14 +69,14 @@ public class FlightRepository {
                         airport.getCountry().toLowerCase().contains(lowerCasePhrase)
                                 || airport.getCity().toLowerCase().contains(lowerCasePhrase)
                                 || airport.getAirport().toLowerCase().contains(lowerCasePhrase))
-                .collect(Collectors.toList());
+                .toList();
     }
     public List<Flight> searchFlights(SearchFlightsRequest request) {
         return flights.stream()
                 .filter(flight -> flight.getFrom().isEgualAirport(request.getFrom())
                         && flight.getTo().isEgualAirport(request.getTo())
                         && isSameDate(flight.getDepartureTime(), request.getDepartureDate()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private boolean isSameDate(String flightDepartureTime, String requestDepartureDate) {
