@@ -1,30 +1,29 @@
 package io.codelex.flightplanner;
 
-
 public class SearchFlightsRequest {
-    private Airport from;
-    private Airport to;
+    private String from;
+    private String to;
     private String departureDate;
 
-    public SearchFlightsRequest(Airport from, Airport to, String departureDate) {
+    public SearchFlightsRequest(String from, String to, String departureDate) {
         this.from = from;
         this.to = to;
         this.departureDate = departureDate;
     }
 
-    public Airport getFrom() {
+    public String getFrom() {
         return from;
     }
 
-    public void setFrom(Airport from) {
+    public void setFrom(String from) {
         this.from = from;
     }
 
-    public Airport getTo() {
+    public String getTo() {
         return to;
     }
 
-    public void setTo(Airport to) {
+    public void setTo(String to) {
         this.to = to;
     }
 

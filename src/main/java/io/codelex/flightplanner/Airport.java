@@ -12,7 +12,6 @@ public class Airport {
         this.city = city;
         this.airport = airport;
     }
-    // Inside the Airport class
     public boolean isEgualAirport(Airport other) {
         if (other == null) {
             return false;

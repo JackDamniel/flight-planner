@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -21,7 +22,8 @@ public class FlightService {
     }
 
     public synchronized boolean deleteFlight(Long flightId) {
-        if (!flightRepository.deleteFlightById(flightId)) {}
+        if (!flightRepository.deleteFlightById(flightId)) {
+        }
         return true;
     }
 
@@ -76,6 +78,7 @@ public class FlightService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, fieldName);
         }
     }
+
     public Flight findFlightById(Long id) {
         Flight flight = flightRepository.findFlightById(id);
         if (flight == null) {
@@ -83,19 +86,31 @@ public class FlightService {
         }
         return flight;
     }
+
     public List<Airport> searchAirports(String search) {
         return flightRepository.searchAirports(search);
     }
     public synchronized List<Flight> searchFlights(SearchFlightsRequest request) {
-        //validateSearchRequest(request);   //Making the 1st 05 test fail = sending back 400error
-        return flightRepository.searchFlights(request);
+        validateSearchRequest(request);
+        if (request.getFrom().equals(request.getTo())) {
+            return Collections.emptyList();
+        }
+
+        List<Flight> flights = flightRepository.searchFlights(request);
+
+        if (flights.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return flights;
     }
 
     private void validateSearchRequest(SearchFlightsRequest request) {
-        if (request.getFrom() == null || request.getTo() == null || request.getDepartureDate() == null) {
+        if (request.getFrom() == null || request.getFrom().isEmpty() ||
+                request.getTo() == null || request.getTo().isEmpty() ||
+                request.getDepartureDate() == null || request.getDepartureDate().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if (request.getFrom().getAirport() == null || request.getTo().getAirport() == null) {
+        if (request.getFrom().equals(request.getTo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }

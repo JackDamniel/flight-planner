@@ -1,6 +1,5 @@
 package io.codelex.flightplanner;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -73,10 +72,20 @@ public class FlightRepository {
     }
     public synchronized List<Flight> searchFlights(SearchFlightsRequest request) {
         return flights.stream()
-                .filter(flight -> flight.getFrom().isEgualAirport(request.getFrom()) &&
-                        flight.getTo().isEgualAirport(request.getTo()) &&
+                .filter(flight -> isEqualAirport(flight.getFrom(), request.getFrom()) &&
+                        isEqualAirport(flight.getTo(), request.getTo()) &&
                         isSameDate(flight.getDepartureTime(), request.getDepartureDate()))
                 .collect(Collectors.toList());
+    }
+
+    private boolean isEqualAirport(Airport flightAirport, String requestAirport) {
+        if (flightAirport == null || requestAirport == null) {
+            return false;
+        }
+        String lowerCaseRequestAirport = requestAirport.trim().toLowerCase();
+        return flightAirport.getCountry().trim().toLowerCase().contains(lowerCaseRequestAirport) ||
+                flightAirport.getCity().trim().toLowerCase().contains(lowerCaseRequestAirport) ||
+                flightAirport.getAirport().trim().toUpperCase().contains(lowerCaseRequestAirport.toUpperCase());
     }
 
     private boolean isSameDate(String flightDepartureTime, String requestDepartureDate) {

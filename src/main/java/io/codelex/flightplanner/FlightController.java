@@ -44,7 +44,7 @@ public class FlightController {
         return flightService.searchAirports(search);
     }
     @PostMapping("/api/flights/search")
-    public PageResult<Flight> searchFlights(SearchFlightsRequest request) {
+    public PageResult<Flight> searchFlights(@RequestBody SearchFlightsRequest request) {
         List<Flight> flights = flightService.searchFlights(request);
         PageResult<Flight> pageResult = new PageResult<>(0, flights.size(), flights);
         return pageResult;
