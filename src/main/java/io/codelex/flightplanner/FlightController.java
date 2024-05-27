@@ -23,11 +23,11 @@ public class FlightController {
         flightService.clearFlights();
         return "Flights cleared successfully";
     }
-
+    @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/admin-api/flights")
-    public ResponseEntity<Flight> addFlight(@Valid @RequestBody AddFlightRequest request) {
+    public Flight addFlight(@Valid @RequestBody AddFlightRequest request) {
         Flight createdFlight = flightService.addFlight(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdFlight);
+        return createdFlight;
     }
     @DeleteMapping("/admin-api/flights/{id}")
     public void deleteFlight(@PathVariable Long id) {
