@@ -21,10 +21,8 @@ public class FlightService {
         flightRepository.deleteAll();
     }
 
-    public synchronized boolean deleteFlight(Long flightId) {
-        if (!flightRepository.deleteFlightById(flightId)) {
-        }
-        return true;
+    public synchronized void deleteFlight(Long flightId) {
+        flightRepository.deleteFlightById(flightId);
     }
 
     public synchronized Flight addFlight(AddFlightRequest request) {
