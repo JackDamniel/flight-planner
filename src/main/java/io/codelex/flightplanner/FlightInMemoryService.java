@@ -8,25 +8,25 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class FlightService {
-    private final FlightRepository flightRepository;
+public class FlightInMemoryService {
+    private final FlightInMemoryRepository flightInMemoryRepository;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public FlightService(FlightRepository flightRepository) {
-        this.flightRepository = flightRepository;
+    public FlightInMemoryService(FlightInMemoryRepository flightInMemoryRepository) {
+        this.flightInMemoryRepository = flightInMemoryRepository;
     }
 
     public synchronized void clearFlights() {
-        flightRepository.deleteAll();
+        flightInMemoryRepository.deleteAll();
     }
 
     public synchronized void deleteFlight(Long flightId) {
-        flightRepository.deleteFlightById(flightId);
+        flightInMemoryRepository.deleteFlightById(flightId);
     }
 
     public synchronized Flight addFlight(AddFlightRequest request) {
-        if (flightRepository.existsDuplicateFlight(request)) {
+        if (flightInMemoryRepository.existsDuplicateFlight(request)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
@@ -40,7 +40,7 @@ public class FlightService {
                 request.getDepartureTime(),
                 request.getArrivalTime()
         );
-        return flightRepository.addFlight(newFlight);
+        return flightInMemoryRepository.addFlight(newFlight);
     }
 
     private void validateFlightRequest(AddFlightRequest request) {
@@ -78,7 +78,7 @@ public class FlightService {
     }
 
     public Flight findFlightById(Long id) {
-        Flight flight = flightRepository.findFlightById(id);
+        Flight flight = flightInMemoryRepository.findFlightById(id);
         if (flight == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -86,7 +86,7 @@ public class FlightService {
     }
 
     public List<Airport> searchAirports(String search) {
-        return flightRepository.searchAirports(search);
+        return flightInMemoryRepository.searchAirports(search);
     }
     public synchronized List<Flight> searchFlights(SearchFlightsRequest request) {
         validateSearchRequest(request);
@@ -94,7 +94,7 @@ public class FlightService {
             return Collections.emptyList();
         }
 
-        List<Flight> flights = flightRepository.searchFlights(request);
+        List<Flight> flights = flightInMemoryRepository.searchFlights(request);
 
         if (flights.isEmpty()) {
             return Collections.emptyList();

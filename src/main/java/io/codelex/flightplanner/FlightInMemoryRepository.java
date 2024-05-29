@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
-public class FlightRepository {
+public class FlightInMemoryRepository {
 
     private List<Flight> flights = new ArrayList<>();
     private AtomicLong idGenerator = new AtomicLong(1);
