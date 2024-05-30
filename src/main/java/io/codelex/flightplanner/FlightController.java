@@ -30,8 +30,7 @@ public class FlightController {
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/admin-api/flights")
     public Flight addFlight(@Valid @RequestBody AddFlightRequest request) {
-        Flight createdFlight = flightPlannerService.addFlight(request);
-        return createdFlight;
+        return flightPlannerService.addFlight(request);
     }
     @DeleteMapping("/admin-api/flights/{id}")
     public void deleteFlight(@PathVariable Long id) {

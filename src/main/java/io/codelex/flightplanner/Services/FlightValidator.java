@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class FlightValidator {
 
-    protected void validateFlightRequest(AddFlightRequest request) {
+    public void validateFlightRequest(AddFlightRequest request) {
         if (request.getFrom() == null || request.getTo() == null ||
                 request.getCarrier() == null || request.getDepartureTime() == null ||
                 request.getArrivalTime() == null) {
@@ -27,35 +27,36 @@ public class FlightValidator {
         LocalDateTime departureTime = request.getDepartureTime();
         LocalDateTime arrivalTime = request.getArrivalTime();
 
-        if (departureTime.isAfter(arrivalTime) || departureTime.isEqual(arrivalTime)) {
+        if (!arrivalTime.isAfter(departureTime)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         validateAirport(request.getFrom(), "From");
         validateAirport(request.getTo(), "To");
 
-        if (request.getFrom().equals(request.getTo())) {
+        if (request.getFrom().getCountry().equalsIgnoreCase(request.getTo().getCountry()) &&
+                request.getFrom().getCity().equalsIgnoreCase(request.getTo().getCity()) &&
+                request.getFrom().getAirport().trim().equalsIgnoreCase(request.getTo().getAirport().trim())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
-    protected void validateAirport(Airport airport, String fieldName) {
-        if (airport == null || airport.getCountry() == null || airport.getCountry().isEmpty() ||
+    private void validateAirport(Airport airport, String fieldName) {
+        if (airport.getCountry() == null || airport.getCountry().isEmpty() ||
                 airport.getCity() == null || airport.getCity().isEmpty() ||
                 airport.getAirport() == null || airport.getAirport().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, fieldName);
         }
     }
 
-    protected void validateSearchRequest(SearchFlightsRequest request) {
-
+    public void validateSearchRequest(SearchFlightsRequest request) {
         if (request.getFrom() == null || request.getFrom().isEmpty() ||
                 request.getTo() == null || request.getTo().isEmpty() ||
                 request.getDepartureDate() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        if (request.getFrom().equals(request.getTo())) {
+        if (request.getFrom().equalsIgnoreCase(request.getTo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }

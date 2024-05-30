@@ -8,12 +8,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class FlightDBService implements FlightPlannerService {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
     private final FlightDBRepository flightDBRepository;
     private final AirportDBRepository airportRepository;
     protected final FlightValidator flightValidator;
@@ -25,18 +28,18 @@ public class FlightDBService implements FlightPlannerService {
     }
 
     @Override
-    public void clearFlights() {
+    public synchronized void clearFlights() {
         this.flightDBRepository.deleteAll();
     }
 
     @Override
-    public void deleteFlight(Long flightId) {
+    public synchronized void deleteFlight(Long flightId) {
         this.flightDBRepository.deleteAll();
 
     }
 
     @Override
-    public Flight addFlight(AddFlightRequest request) {
+    public synchronized Flight addFlight(AddFlightRequest request) {
         flightValidator.validateFlightRequest(request);
 
         Airport fromAirport = findOrCreateAirport(request.getFrom());
@@ -69,28 +72,38 @@ public class FlightDBService implements FlightPlannerService {
     }
 
     @Override
-    public Flight findFlightById(Long id) {
+    public synchronized Flight findFlightById(Long id) {
         return flightDBRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public List<Airport> searchAirports(String search) {
+    public synchronized List<Airport> searchAirports(String search) {
         String lowerCasePhrase = search.toLowerCase().trim();
-        return airportRepository.findByCountryContainingIgnoreCaseOrCityContainingIgnoreCaseOrAirportContainingIgnoreCase(lowerCasePhrase, lowerCasePhrase, lowerCasePhrase);
+        return airportRepository.findByCountryContainingIgnoreCaseOrCityContainingIgnoreCaseOrAirportContainingIgnoreCase(
+                        lowerCasePhrase, lowerCasePhrase, lowerCasePhrase)
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Flight> searchFlights(SearchFlightsRequest request) {
+    public synchronized List<Flight> searchFlights(SearchFlightsRequest request) {
         flightValidator.validateSearchRequest(request);
 
         LocalDateTime departureTime = request.getDepartureDate();
 
-        return flightDBRepository.findByFrom_CountryAndTo_CountryAndDepartureTimeAfter(
+        List<Flight> flights = flightDBRepository.findByFrom_CountryAndTo_CountryAndDepartureTimeAfter(
                 request.getFrom(), request.getTo(), departureTime);
+
+        if (flights.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return flights;
+        }
     }
 
-    private Airport findOrCreateAirport(Airport airport) {
+    private synchronized Airport findOrCreateAirport(Airport airport) {
         return airportRepository.findByCountryAndCityAndAirport(airport.getCountry(), airport.getCity(), airport.getAirport())
                 .orElseGet(() -> airportRepository.save(airport));
     }
