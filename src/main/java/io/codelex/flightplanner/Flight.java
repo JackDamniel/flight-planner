@@ -1,10 +1,21 @@
 package io.codelex.flightplanner;
 
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
 public class Flight {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "from_airport_id", referencedColumnName = "id")
     private Airport from;
+    @ManyToOne
+    @JoinColumn(name = "to_airport_id", referencedColumnName = "id")
     private Airport to;
     private String carrier;
     private String departureTime;
@@ -19,12 +30,9 @@ public class Flight {
         this.arrivalTime = arrivalTime;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Flight() {}
 
-    public void setId(Long id) {
-        this.id = id;
+    public Flight(Airport fromAirport, Airport toAirport, String carrier, LocalDateTime localDateTime, LocalDateTime localDateTime1) {
     }
 
     public Airport getFrom() {
@@ -77,5 +85,13 @@ public class Flight {
     @Override
     public int hashCode() {
         return Objects.hash(id, from, to, carrier, departureTime, arrivalTime);
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

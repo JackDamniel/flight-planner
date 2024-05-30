@@ -1,4 +1,8 @@
-package io.codelex.flightplanner;
+package io.codelex.flightplanner.Repository;
+import io.codelex.flightplanner.AddFlightRequest;
+import io.codelex.flightplanner.Airport;
+import io.codelex.flightplanner.Flight;
+import io.codelex.flightplanner.SearchFlightsRequest;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
