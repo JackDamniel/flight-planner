@@ -4,12 +4,10 @@ import io.codelex.flightplanner.*;
 import io.codelex.flightplanner.Repository.AirportDBRepository;
 import io.codelex.flightplanner.Repository.FlightDBRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,22 +50,20 @@ public class FlightDBService implements FlightPlannerService {
         flight.setFrom(fromAirport);
         flight.setTo(toAirport);
         flight.setCarrier(request.getCarrier());
-        flight.setDepartureTime(request.parseDepartureTime().format(formatter));
-        flight.setArrivalTime(request.parseArrivalTime().format(formatter));
+        flight.setDepartureTime(request.getDepartureTime());
+        flight.setArrivalTime(request.getArrivalTime());
 
-        Flight savedFlight = flightDBRepository.save(flight);
-        return savedFlight;
+        return flightDBRepository.save(flight);
     }
     public boolean flightExists(AddFlightRequest request) {
         Airport fromAirport = findOrCreateAirport(request.getFrom());
         Airport toAirport = findOrCreateAirport(request.getTo());
 
-        LocalDateTime departureTime = request.parseDepartureTime();
-        LocalDateTime arrivalTime = request.parseArrivalTime();
+        LocalDateTime departureTime = request.getDepartureTime();
+        LocalDateTime arrivalTime = request.getArrivalTime();
 
         Optional<Flight> existingFlight = flightDBRepository.findByFromAndToAndCarrierAndDepartureTimeAndArrivalTime(
-                fromAirport, toAirport, request.getCarrier(),
-                departureTime.format(formatter), arrivalTime.format(formatter));
+                fromAirport, toAirport, request.getCarrier(), departureTime, arrivalTime);
 
         return existingFlight.isPresent();
     }
@@ -86,7 +82,12 @@ public class FlightDBService implements FlightPlannerService {
 
     @Override
     public List<Flight> searchFlights(SearchFlightsRequest request) {
-        return null;
+        flightValidator.validateSearchRequest(request);
+
+        LocalDateTime departureTime = request.getDepartureDate();
+
+        return flightDBRepository.findByFrom_CountryAndTo_CountryAndDepartureTimeAfter(
+                request.getFrom(), request.getTo(), departureTime);
     }
 
     private Airport findOrCreateAirport(Airport airport) {

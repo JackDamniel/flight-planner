@@ -1,11 +1,13 @@
 package io.codelex.flightplanner;
 
+import java.time.LocalDateTime;
+
 public class SearchFlightsRequest {
     private String from;
     private String to;
-    private String departureDate;
+    private LocalDateTime departureDate;
 
-    public SearchFlightsRequest(String from, String to, String departureDate) {
+    public SearchFlightsRequest(String from, String to, LocalDateTime departureDate) {
         this.from = from;
         this.to = to;
         this.departureDate = departureDate;
@@ -27,11 +29,11 @@ public class SearchFlightsRequest {
         this.to = to;
     }
 
-    public String getDepartureDate() {
+    public LocalDateTime getDepartureDate() {
         return departureDate;
     }
 
-    public void setDepartureDate(String departureDate) {
+    public void setDepartureDate(LocalDateTime departureDate) {
         this.departureDate = departureDate;
     }
 }

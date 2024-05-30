@@ -78,7 +78,7 @@ public class FlightInMemoryRepository {
         return flights.stream()
                 .filter(flight -> isEqualAirport(flight.getFrom(), request.getFrom()) &&
                         isEqualAirport(flight.getTo(), request.getTo()) &&
-                        isSameDate(flight.getDepartureTime(), request.getDepartureDate()))
+                        isSameDateTime(flight.getDepartureTime(), request.getDepartureDate()))
                 .collect(Collectors.toList());
     }
 
@@ -92,10 +92,9 @@ public class FlightInMemoryRepository {
                 flightAirport.getAirport().trim().toUpperCase().contains(lowerCaseRequestAirport.toUpperCase());
     }
 
-    private boolean isSameDate(String flightDepartureTime, String requestDepartureDate) {
-        LocalDateTime flightDateTime = LocalDateTime.parse(flightDepartureTime, formatter);
-        LocalDate requestDate = LocalDate.parse(requestDepartureDate);
-        return flightDateTime.toLocalDate().isEqual(requestDate);
+    private boolean isSameDateTime(LocalDateTime flightDepartureTime, LocalDateTime requestDepartureDateTime) {
+        return flightDepartureTime.toLocalDate().isEqual(requestDepartureDateTime.toLocalDate()) &&
+                flightDepartureTime.toLocalTime().equals(requestDepartureDateTime.toLocalTime());
     }
 }
 

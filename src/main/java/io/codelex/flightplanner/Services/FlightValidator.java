@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class FlightValidator {
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     protected void validateFlightRequest(AddFlightRequest request) {
         if (request.getFrom() == null || request.getTo() == null ||
@@ -25,8 +24,8 @@ public class FlightValidator {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        LocalDateTime departureTime = LocalDateTime.parse(request.getDepartureTime(), formatter);
-        LocalDateTime arrivalTime = LocalDateTime.parse(request.getArrivalTime(), formatter);
+        LocalDateTime departureTime = request.getDepartureTime();
+        LocalDateTime arrivalTime = request.getArrivalTime();
 
         if (departureTime.isAfter(arrivalTime) || departureTime.isEqual(arrivalTime)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -35,7 +34,7 @@ public class FlightValidator {
         validateAirport(request.getFrom(), "From");
         validateAirport(request.getTo(), "To");
 
-        if (request.getFrom().isEgualAirport(request.getTo())) {
+        if (request.getFrom().equals(request.getTo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
@@ -49,11 +48,13 @@ public class FlightValidator {
     }
 
     protected void validateSearchRequest(SearchFlightsRequest request) {
+
         if (request.getFrom() == null || request.getFrom().isEmpty() ||
                 request.getTo() == null || request.getTo().isEmpty() ||
-                request.getDepartureDate() == null || request.getDepartureDate().isEmpty()) {
+                request.getDepartureDate() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+
         if (request.getFrom().equals(request.getTo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
