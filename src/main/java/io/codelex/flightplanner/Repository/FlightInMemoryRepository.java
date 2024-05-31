@@ -6,7 +6,6 @@ import io.codelex.flightplanner.SearchFlightsRequest;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +18,6 @@ public class FlightInMemoryRepository {
 
     private List<Flight> flights = new ArrayList<>();
     private AtomicLong idGenerator = new AtomicLong(1);
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public void saveFlight(Flight flight) {
         flight.setId(generateFlightId());
@@ -78,7 +76,7 @@ public class FlightInMemoryRepository {
         return flights.stream()
                 .filter(flight -> isEqualAirport(flight.getFrom(), request.getFrom()) &&
                         isEqualAirport(flight.getTo(), request.getTo()) &&
-                        isSameDateTime(flight.getDepartureTime(), request.getDepartureDate()))
+                        isSameDate(flight.getDepartureTime(), request.getDepartureDate()))
                 .collect(Collectors.toList());
     }
 
@@ -92,9 +90,8 @@ public class FlightInMemoryRepository {
                 flightAirport.getAirport().trim().toUpperCase().contains(lowerCaseRequestAirport.toUpperCase());
     }
 
-    private boolean isSameDateTime(LocalDateTime flightDepartureTime, LocalDateTime requestDepartureDateTime) {
-        return flightDepartureTime.toLocalDate().isEqual(requestDepartureDateTime.toLocalDate()) &&
-                flightDepartureTime.toLocalTime().equals(requestDepartureDateTime.toLocalTime());
+    private boolean isSameDate(LocalDateTime flightDepartureTime, LocalDate requestDepartureDate) {
+        return flightDepartureTime.toLocalDate().isEqual(requestDepartureDate);
     }
 }
 

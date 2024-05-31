@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class FlightValidator {
 
-    public void validateFlightRequest(AddFlightRequest request) {
+    protected void validateFlightRequest(AddFlightRequest request) {
         if (request.getFrom() == null || request.getTo() == null ||
                 request.getCarrier() == null || request.getDepartureTime() == null ||
                 request.getArrivalTime() == null) {
@@ -41,7 +41,7 @@ public class FlightValidator {
         }
     }
 
-    private void validateAirport(Airport airport, String fieldName) {
+    protected void validateAirport(Airport airport, String fieldName) {
         if (airport.getCountry() == null || airport.getCountry().isEmpty() ||
                 airport.getCity() == null || airport.getCity().isEmpty() ||
                 airport.getAirport() == null || airport.getAirport().isEmpty()) {
@@ -49,7 +49,7 @@ public class FlightValidator {
         }
     }
 
-    public void validateSearchRequest(SearchFlightsRequest request) {
+    protected void validateSearchRequest(SearchFlightsRequest request) {
         if (request.getFrom() == null || request.getFrom().isEmpty() ||
                 request.getTo() == null || request.getTo().isEmpty() ||
                 request.getDepartureDate() == null) {

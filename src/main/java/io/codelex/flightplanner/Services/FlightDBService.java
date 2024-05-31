@@ -6,16 +6,14 @@ import io.codelex.flightplanner.Repository.FlightDBRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FlightDBService implements FlightPlannerService {
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final FlightDBRepository flightDBRepository;
     private final AirportDBRepository airportRepository;
@@ -29,25 +27,24 @@ public class FlightDBService implements FlightPlannerService {
 
     @Override
     public synchronized void clearFlights() {
-        this.flightDBRepository.deleteAll();
+        flightDBRepository.deleteAll();
     }
 
     @Override
-    public synchronized void deleteFlight(Long flightId) {
-        this.flightDBRepository.deleteAll();
-
+    public void deleteFlight(Long flightId) {
+        flightDBRepository.deleteById(flightId);
     }
 
     @Override
     public synchronized Flight addFlight(AddFlightRequest request) {
         flightValidator.validateFlightRequest(request);
 
-        Airport fromAirport = findOrCreateAirport(request.getFrom());
-        Airport toAirport = findOrCreateAirport(request.getTo());
-
         if (flightExists(request)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
+
+        Airport fromAirport = findOrCreateAirport(request.getFrom());
+        Airport toAirport = findOrCreateAirport(request.getTo());
 
         Flight flight = new Flight();
         flight.setFrom(fromAirport);
@@ -58,7 +55,8 @@ public class FlightDBService implements FlightPlannerService {
 
         return flightDBRepository.save(flight);
     }
-    public boolean flightExists(AddFlightRequest request) {
+
+    private boolean flightExists(AddFlightRequest request) {
         Airport fromAirport = findOrCreateAirport(request.getFrom());
         Airport toAirport = findOrCreateAirport(request.getTo());
 
@@ -91,10 +89,12 @@ public class FlightDBService implements FlightPlannerService {
     public synchronized List<Flight> searchFlights(SearchFlightsRequest request) {
         flightValidator.validateSearchRequest(request);
 
-        LocalDateTime departureTime = request.getDepartureDate();
+        LocalDate departureTime = request.getDepartureDate();
+        LocalDateTime startOfDay = departureTime.atStartOfDay();
+        LocalDateTime endOfDay = departureTime.plusDays(1).atStartOfDay();
 
-        List<Flight> flights = flightDBRepository.findByFrom_CountryAndTo_CountryAndDepartureTimeAfter(
-                request.getFrom(), request.getTo(), departureTime);
+        List<Flight> flights = flightDBRepository.findByFrom_CountryAndTo_CountryAndDepartureTimeBetween(
+                request.getFrom(), request.getTo(), startOfDay, endOfDay);
 
         if (flights.isEmpty()) {
             return Collections.emptyList();

@@ -30,17 +30,22 @@ public class FlightInMemoryService implements FlightPlannerService {
         if (flightInMemoryRepository.existsDuplicateFlight(request)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
-
         validateFlightRequest(request);
+
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String departureTimeString = request.getDepartureTime().format(formatter);
+        String arrivalTimeString = request.getArrivalTime().format(formatter);
 
         Flight newFlight = new Flight(
                 null,
                 request.getFrom(),
                 request.getTo(),
                 request.getCarrier(),
-                request.getDepartureTime(),
-                request.getArrivalTime()
+                departureTimeString,
+                arrivalTimeString
         );
+
         return flightInMemoryRepository.addFlight(newFlight);
     }
 

@@ -24,13 +24,13 @@ public class Flight {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime arrivalTime;
 
-    public Flight(Long id, Airport from, Airport to, String carrier, LocalDateTime departureTime, LocalDateTime arrivalTime) {
+    public Flight(Long id, Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.carrier = carrier;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
+        this.departureTime = LocalDateTime.parse(departureTime);
+        this.arrivalTime = LocalDateTime.parse(arrivalTime);
     }
 
     public Flight() {}
