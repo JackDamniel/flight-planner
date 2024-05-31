@@ -1,9 +1,11 @@
 package io.codelex.flightplanner.Repository;
+
 import io.codelex.flightplanner.AddFlightRequest;
 import io.codelex.flightplanner.Airport;
 import io.codelex.flightplanner.Flight;
 import io.codelex.flightplanner.SearchFlightsRequest;
 import org.springframework.stereotype.Repository;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class FlightInMemoryRepository {
                         flight.getCarrier().equals(request.getCarrier())
         );
     }
+
     public synchronized void deleteAll() {
         flights.clear();
     }
@@ -44,14 +47,17 @@ public class FlightInMemoryRepository {
     public synchronized boolean deleteFlightById(Long id) {
         return flights.removeIf(flight -> flight.getId().equals(id));
     }
+
     public synchronized Flight addFlight(Flight flight) {
         flight.setId(generateFlightId());
         flights.add(flight);
         return flight;
     }
+
     private synchronized Long generateFlightId() {
         return idGenerator.getAndIncrement();
     }
+
     public Flight findFlightById(Long id) {
         for (Flight flight : flights) {
             if (flight.getId().equals(id)) {
@@ -60,6 +66,7 @@ public class FlightInMemoryRepository {
         }
         return null;
     }
+
     public List<Airport> searchAirports(String search) {
         String lowerCasePhrase = search.toLowerCase().trim();
         return flights.stream()
@@ -72,6 +79,7 @@ public class FlightInMemoryRepository {
                                 || airport.getAirport().toLowerCase().contains(lowerCasePhrase))
                 .collect(Collectors.toList());
     }
+
     public synchronized List<Flight> searchFlights(SearchFlightsRequest request) {
         return flights.stream()
                 .filter(flight -> isEqualAirport(flight.getFrom(), request.getFrom()) &&

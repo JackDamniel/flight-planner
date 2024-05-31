@@ -33,9 +33,7 @@ public class Flight {
         this.arrivalTime = LocalDateTime.parse(arrivalTime);
     }
 
-    public Flight() {}
-
-    public Flight(Airport fromAirport, Airport toAirport, String carrier, LocalDateTime localDateTime, LocalDateTime localDateTime1) {
+    public Flight() {
     }
 
     public Airport getFrom() {

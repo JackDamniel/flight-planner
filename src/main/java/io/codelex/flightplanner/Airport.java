@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+
 @Entity
 public class Airport {
     @Id
@@ -22,23 +23,7 @@ public class Airport {
         this.airport = airport;
     }
 
-    public Airport() {}
-
-    public boolean isEgualAirport(Airport other) {
-        if (other == null) {
-            return false;
-        }
-        String thisCountry = this.country.trim().toLowerCase();
-        String thisCity = this.city.trim().toLowerCase();
-        String thisAirportCode = this.airport.trim().toUpperCase();
-
-        String otherCountry = other.country.trim().toLowerCase();
-        String otherCity = other.city.trim().toLowerCase();
-        String otherAirportCode = other.airport.trim().toUpperCase();
-
-        return thisCountry.equals(otherCountry) &&
-                thisCity.equals(otherCity) &&
-                thisAirportCode.equals(otherAirportCode);
+    public Airport() {
     }
 
 
@@ -81,6 +66,7 @@ public class Airport {
     public void setId(Long id) {
         this.id = id;
     }
+
     @JsonIgnore
     public Long getId() {
         return id;

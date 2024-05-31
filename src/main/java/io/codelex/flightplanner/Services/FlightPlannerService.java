@@ -10,7 +10,7 @@ import java.util.List;
 public interface FlightPlannerService {
     public void clearFlights();
 
-    public  void deleteFlight(Long flightId);
+    public void deleteFlight(Long flightId);
 
     public Flight addFlight(AddFlightRequest request);
 
@@ -19,5 +19,4 @@ public interface FlightPlannerService {
     public List<Airport> searchAirports(String search);
 
     public List<Flight> searchFlights(SearchFlightsRequest request);
-
 }

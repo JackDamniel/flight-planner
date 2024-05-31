@@ -1,5 +1,7 @@
 package io.codelex.flightplanner;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
 
 

@@ -1,4 +1,5 @@
 package io.codelex.flightplanner;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

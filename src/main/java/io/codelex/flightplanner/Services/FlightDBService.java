@@ -66,7 +66,18 @@ public class FlightDBService implements FlightPlannerService {
         Optional<Flight> existingFlight = flightDBRepository.findByFromAndToAndCarrierAndDepartureTimeAndArrivalTime(
                 fromAirport, toAirport, request.getCarrier(), departureTime, arrivalTime);
 
-        return existingFlight.isPresent();
+        if (existingFlight.isPresent()) {
+            Flight flight = existingFlight.get();
+
+            if (flight.getFrom().equals(fromAirport) &&
+                    flight.getTo().equals(toAirport) &&
+                    flight.getCarrier().equals(request.getCarrier()) &&
+                    flight.getDepartureTime().isEqual(departureTime) &&
+                    flight.getArrivalTime().isEqual(arrivalTime)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
