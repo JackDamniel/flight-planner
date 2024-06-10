@@ -31,7 +31,7 @@ public class FlightDBService implements FlightPlannerService {
     }
 
     @Override
-    public void deleteFlight(Long flightId) {
+    public synchronized void deleteFlight(Long flightId) {
         flightDBRepository.deleteById(flightId);
     }
 
@@ -66,19 +66,9 @@ public class FlightDBService implements FlightPlannerService {
         Optional<Flight> existingFlight = flightDBRepository.findByFromAndToAndCarrierAndDepartureTimeAndArrivalTime(
                 fromAirport, toAirport, request.getCarrier(), departureTime, arrivalTime);
 
-        if (existingFlight.isPresent()) {
-            Flight flight = existingFlight.get();
-
-            if (flight.getFrom().equals(fromAirport) &&
-                    flight.getTo().equals(toAirport) &&
-                    flight.getCarrier().equals(request.getCarrier()) &&
-                    flight.getDepartureTime().isEqual(departureTime) &&
-                    flight.getArrivalTime().isEqual(arrivalTime)) {
-                return true;
-            }
-        }
-        return false;
+        return existingFlight.isPresent();
     }
+
 
     @Override
     public synchronized Flight findFlightById(Long id) {
