@@ -1,8 +1,13 @@
-package io.codelex.flightplanner;
+package io.codelex.flightplanner.Repository;
+
+import io.codelex.flightplanner.AddFlightRequest;
+import io.codelex.flightplanner.Airport;
+import io.codelex.flightplanner.Flight;
+import io.codelex.flightplanner.SearchFlightsRequest;
 import org.springframework.stereotype.Repository;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,11 +16,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
-public class FlightRepository {
+public class FlightInMemoryRepository {
 
     private List<Flight> flights = new ArrayList<>();
     private AtomicLong idGenerator = new AtomicLong(1);
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public void saveFlight(Flight flight) {
         flight.setId(generateFlightId());
@@ -35,6 +39,7 @@ public class FlightRepository {
                         flight.getCarrier().equals(request.getCarrier())
         );
     }
+
     public synchronized void deleteAll() {
         flights.clear();
     }
@@ -42,14 +47,17 @@ public class FlightRepository {
     public synchronized boolean deleteFlightById(Long id) {
         return flights.removeIf(flight -> flight.getId().equals(id));
     }
+
     public synchronized Flight addFlight(Flight flight) {
         flight.setId(generateFlightId());
         flights.add(flight);
         return flight;
     }
+
     private synchronized Long generateFlightId() {
         return idGenerator.getAndIncrement();
     }
+
     public Flight findFlightById(Long id) {
         for (Flight flight : flights) {
             if (flight.getId().equals(id)) {
@@ -58,6 +66,7 @@ public class FlightRepository {
         }
         return null;
     }
+
     public List<Airport> searchAirports(String search) {
         String lowerCasePhrase = search.toLowerCase().trim();
         return flights.stream()
@@ -70,6 +79,7 @@ public class FlightRepository {
                                 || airport.getAirport().toLowerCase().contains(lowerCasePhrase))
                 .collect(Collectors.toList());
     }
+
     public synchronized List<Flight> searchFlights(SearchFlightsRequest request) {
         return flights.stream()
                 .filter(flight -> isEqualAirport(flight.getFrom(), request.getFrom()) &&
@@ -88,10 +98,8 @@ public class FlightRepository {
                 flightAirport.getAirport().trim().toUpperCase().contains(lowerCaseRequestAirport.toUpperCase());
     }
 
-    private boolean isSameDate(String flightDepartureTime, String requestDepartureDate) {
-        LocalDateTime flightDateTime = LocalDateTime.parse(flightDepartureTime, formatter);
-        LocalDate requestDate = LocalDate.parse(requestDepartureDate);
-        return flightDateTime.toLocalDate().isEqual(requestDate);
+    private boolean isSameDate(LocalDateTime flightDepartureTime, LocalDate requestDepartureDate) {
+        return flightDepartureTime.toLocalDate().isEqual(requestDepartureDate);
     }
 }
 

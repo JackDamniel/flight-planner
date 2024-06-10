@@ -1,30 +1,39 @@
 package io.codelex.flightplanner;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
 public class Flight {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "from_airport_id", referencedColumnName = "id")
     private Airport from;
+    @ManyToOne
+    @JoinColumn(name = "to_airport_id", referencedColumnName = "id")
     private Airport to;
     private String carrier;
-    private String departureTime;
-    private String arrivalTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime departureTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime arrivalTime;
 
     public Flight(Long id, Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.carrier = carrier;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
+        this.departureTime = LocalDateTime.parse(departureTime);
+        this.arrivalTime = LocalDateTime.parse(arrivalTime);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public Flight() {
     }
 
     public Airport getFrom() {
@@ -51,19 +60,19 @@ public class Flight {
         this.carrier = carrier;
     }
 
-    public String getDepartureTime() {
+    public LocalDateTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(String departureTime) {
+    public void setDepartureTime(LocalDateTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public String getArrivalTime() {
+    public LocalDateTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(String arrivalTime) {
+    public void setArrivalTime(LocalDateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
@@ -77,5 +86,13 @@ public class Flight {
     @Override
     public int hashCode() {
         return Objects.hash(id, from, to, carrier, departureTime, arrivalTime);
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
