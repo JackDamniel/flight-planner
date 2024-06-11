@@ -8,13 +8,13 @@ It provides functionalities for adding flights, checking flight availability, an
 
 The application aims to streamline the flight management process for both administrators and users, offering an intuitive interface and efficient backend operations.
 
-**Project Objectives**: ✅
+**Project Objectives**: 📌
  - *Flight Management*
  - *Flight Search*
  - *Duplicate Check*
  - *Data Persistence*
 
-### **Key Features**
+### **Key Features** 📜
 1. **Add Flight**:
    - Input flight details including departure and arrival airports, carrier, departure, and arrival times.
    - Automatically check for and prevent duplicate flights.
@@ -39,7 +39,7 @@ The application aims to streamline the flight management process for both admini
 - Install IntelliJ IDEA, which supports running Spring Boot applications.
 - Clone the repository from GitHub.
 
-## **Steps:**
+## **Steps**
 
 ### Clone the Repository
 
@@ -68,7 +68,7 @@ The application aims to streamline the flight management process for both admini
 ### **Interacting with the Application:**
 - Since the application doesn't have a UI, you can interact with it using tools like **Postman** or **curl** to make HTTP requests.
 
-### **Interacting with the Application using Postman:**
+### **Interacting with the Application using Postman**
 
 - **Clear Flights:**
   - Method: POST
@@ -121,7 +121,7 @@ The application aims to streamline the flight management process for both admini
     ```
   - Headers: `Content-Type: application/json`
 
-## *Technologies Used*: 💡
+## **Technologies Used** 💡
 - Java
 - SpringBoot
 - SpringBoot security
